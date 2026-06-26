@@ -1,4 +1,4 @@
-import { getSchedule } from "@/lib/notion";
+import { getSchedule, getTeams } from "@/lib/notion";
 import { formatDate } from "@/lib/format";
 import Empty from "@/components/Empty";
 
@@ -11,8 +11,22 @@ const statusBadge = (s) => {
   return "badge-ice";
 };
 
+function TeamLogo({ name, logos }) {
+  const logo = logos[name];
+  return (
+    <span className="tlogo">
+      {logo ? <img src={logo} alt={name} /> : <span>{name?.[0] ?? "?"}</span>}
+    </span>
+  );
+}
+
 export default async function SchedulePage() {
-  const schedule = await getSchedule();
+  const [schedule, teams] = await Promise.all([getSchedule(), getTeams()]);
+
+  const teamLogos = {};
+  teams.forEach((t) => {
+    if (t.name) teamLogos[t.name] = t.logo || "";
+  });
 
   return (
     <>
@@ -20,7 +34,7 @@ export default async function SchedulePage() {
         <div className="container">
           <div className="eyebrow">MATCH SCHEDULE</div>
           <h1>경기 일정</h1>
-          <p>퍼시픽 리그 2026 시즌 전체 경기 일정입니다. 장소: 김포 아이스링크.</p>
+          <p>퍼시픽 리그 2026 시즌 전체 경기 일정입니다.</p>
         </div>
       </section>
 
@@ -39,12 +53,13 @@ export default async function SchedulePage() {
                     {m.time && <span>· {m.time}</span>}
                   </div>
                   <div className="match">
-                    <span className="team home">{m.home || "TBD"}</span>
+                    <span className="team home">
+                      {m.home || "TBD"}<TeamLogo name={m.home} logos={teamLogos} />
+                    </span>
                     <span className="vs">VS</span>
-                    <span className="team">{m.away || "TBD"}</span>
-                  </div>
-                  <div style={{ textAlign: "center", marginTop: 14, color: "var(--steel-400)", fontSize: 12.5 }}>
-                    📍 {m.place}
+                    <span className="team">
+                      <TeamLogo name={m.away} logos={teamLogos} />{m.away || "TBD"}
+                    </span>
                   </div>
                 </div>
               ))}
