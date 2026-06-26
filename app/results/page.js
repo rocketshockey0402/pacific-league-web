@@ -1,4 +1,4 @@
-import { getResults } from "@/lib/notion";
+import { getResults, getTeams } from "@/lib/notion";
 import { formatDate } from "@/lib/format";
 import Empty from "@/components/Empty";
 
@@ -6,7 +6,12 @@ export const metadata = { title: "경기 결과 | 퍼시픽 리그" };
 export const revalidate = 60;
 
 export default async function ResultsPage() {
-  const results = await getResults();
+  const [results, teams] = await Promise.all([getResults(), getTeams()]);
+
+  const teamLogos = {};
+  teams.forEach((t) => {
+    if (t.name) teamLogos[t.name] = t.logo || "";
+  });
 
   return (
     <>
@@ -34,14 +39,22 @@ export default async function ResultsPage() {
                       <span>{formatDate(m.date)}</span>
                       {m.mvp && <span className="badge badge-accent">MVP {m.mvp}</span>}
                     </div>
-                    <div className="match">
-                      <span className="team home">{m.home || "TBD"}</span>
-                      <span className="score">
-                        <span className={homeWin ? "win" : ""}>{m.homeScore}</span>
-                        <span style={{ color: "var(--steel-500)", margin: "0 6px" }}>:</span>
-                        <span className={awayWin ? "win" : ""}>{m.awayScore}</span>
-                      </span>
-                      <span className="team">{m.away || "TBD"}</span>
+                    <div className="result-match">
+                      <div className="rteam">
+                        <div className="rlogo">
+                          {teamLogos[m.home] ? <img src={teamLogos[m.home]} alt={m.home} /> : (m.home?.[0] ?? "?")}
+                        </div>
+                        <div className="rname">{m.home || "TBD"}</div>
+                        <div className={`rscore ${homeWin ? "win" : ""}`}>{m.homeScore}</div>
+                      </div>
+                      <div className="rcolon">:</div>
+                      <div className="rteam">
+                        <div className="rlogo">
+                          {teamLogos[m.away] ? <img src={teamLogos[m.away]} alt={m.away} /> : (m.away?.[0] ?? "?")}
+                        </div>
+                        <div className="rname">{m.away || "TBD"}</div>
+                        <div className={`rscore ${awayWin ? "win" : ""}`}>{m.awayScore}</div>
+                      </div>
                     </div>
                   </div>
                 );
