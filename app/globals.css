@@ -201,6 +201,21 @@ img { max-width: 100%; display: block; }
 .match .score .win { color: var(--ice-400); }
 .match-meta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; color: var(--text-dim); font-size: 12.5px; margin-bottom: 14px; }
 
+/* ── 경기 결과 카드 (세로형: 로고 → 팀명 → 스코어) ── */
+.result-match { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; padding: 8px 0 4px; }
+.result-match .rteam { text-align: center; }
+.result-match .rlogo {
+  width: 56px; height: 56px; margin: 0 auto 10px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--navy-600), var(--navy-800));
+  border: 1px solid var(--border); overflow: hidden;
+  display: grid; place-items: center; font-size: 18px; font-weight: 900; color: var(--ice-300);
+}
+.result-match .rlogo img { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
+.result-match .rname { font-size: 15px; font-weight: 800; margin-bottom: 8px; }
+.result-match .rscore { font-size: 40px; font-weight: 900; line-height: 1; color: var(--white); }
+.result-match .rscore.win { color: var(--ice-400); }
+.result-match .rcolon { font-size: 26px; font-weight: 900; color: var(--steel-500); align-self: center; }
+
 /* ── 테이블 (순위표) ── */
 .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
 table.standings { width: 100%; border-collapse: collapse; min-width: 560px; }
