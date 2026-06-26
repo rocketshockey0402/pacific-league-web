@@ -1,8 +1,13 @@
+import { getVideos } from "@/lib/notion";
+import { formatDate } from "@/lib/format";
 import Empty from "@/components/Empty";
 
 export const metadata = { title: "영상 | 퍼시픽 리그" };
+export const revalidate = 60;
 
-export default function VideosPage() {
+export default async function VideosPage() {
+  const videos = await getVideos();
+
   return (
     <>
       <section className="page-title">
@@ -15,10 +20,41 @@ export default function VideosPage() {
 
       <section className="section">
         <div className="container">
-          <Empty
-            title="하이라이트 영상이 곧 공개됩니다 🎬"
-            desc="경기 하이라이트가 준비되면 이곳에 업로드됩니다. 인스타그램에서도 만나보세요."
-          />
+          {videos.length === 0 ? (
+            <Empty
+              title="등록된 영상이 없어요 🎬"
+              desc="노션 ‘영상’ DB에 유튜브 링크를 추가하면 이곳에 자동으로 재생됩니다."
+            />
+          ) : (
+            <div className="grid grid-2">
+              {videos.map((v) => (
+                <div className="card video-card" key={v.id}>
+                  {v.youtubeId ? (
+                    <div className="video-frame">
+                      <iframe
+                        src={`https://www.youtube.com/embed/${v.youtubeId}`}
+                        title={v.title}
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                  ) : (
+                    v.url && (
+                      <a href={v.url} target="_blank" rel="noopener noreferrer" className="video-frame video-link">
+                        ▶ 영상 보러가기
+                      </a>
+                    )
+                  )}
+                  <div className="video-meta">
+                    <h3>{v.title}</h3>
+                    <div className="when">{formatDate(v.date)}</div>
+                    {v.desc && <p>{v.desc}</p>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </>
