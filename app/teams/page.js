@@ -29,12 +29,6 @@ export default async function TeamsPage() {
                     {t.logo ? <img src={t.logo} alt={t.name} /> : (t.name?.[0] ?? "?")}
                   </div>
                   <h3>{t.name}</h3>
-                  <div className="meta">
-                    {t.captain && <span>주장 {t.captain}</span>}
-                    {t.captain && t.base && <span> · </span>}
-                    {t.base && <span>{t.base}</span>}
-                  </div>
-                  {t.intro && <p>{t.intro}</p>}
                   {t.instagram && (
                     <a
                       href={t.instagram}
