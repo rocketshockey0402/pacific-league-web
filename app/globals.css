@@ -248,7 +248,8 @@ table.standings .pts { font-weight: 900; color: var(--ice-400); font-size: 15px;
 }
 .seg button.active { background: var(--ice-400); color: #04101f; }
 
-.subtabs { display: flex; gap: 20px; border-bottom: 1px solid var(--border); margin-bottom: 6px; }
+.subtabs { display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); margin-bottom: 6px; }
+.subtabs button { flex: 1; text-align: center; }
 .subtabs button {
   background: none; border: none; padding: 12px 2px;
   color: var(--text-dim); font-weight: 700; font-size: 14px; cursor: pointer;
