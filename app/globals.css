@@ -183,8 +183,19 @@ img { max-width: 100%; display: block; }
 .match {
   display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px;
 }
-.match .team { font-weight: 800; font-size: 16px; }
-.match .team.home { text-align: right; }
+.match .team { font-weight: 800; font-size: 16px; display: flex; align-items: center; gap: 6px; }
+.match .team.home { justify-content: flex-end; }
+
+/* 팀명 옆 작은 로고 */
+.tlogo {
+  display: inline-grid; place-items: center;
+  width: 22px; height: 22px; flex: 0 0 22px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--navy-600), var(--navy-800));
+  border: 1px solid var(--border); overflow: hidden;
+  font-size: 10px; font-weight: 900; color: var(--ice-300); vertical-align: middle;
+}
+.tlogo img { width: 100%; height: 100%; object-fit: contain; padding: 2px; }
+.standings .team-name .tcell { display: flex; align-items: center; gap: 8px; }
 .match .vs { font-size: 12px; color: var(--steel-400); font-weight: 700; }
 .match .score { font-size: 26px; font-weight: 900; letter-spacing: 0.04em; }
 .match .score .win { color: var(--ice-400); }

@@ -1,17 +1,33 @@
 import Link from "next/link";
-import { getSchedule, getStandings, getResults } from "@/lib/notion";
+import { getSchedule, getStandings, getResults, getTeams } from "@/lib/notion";
 import { formatDate } from "@/lib/format";
 import Empty from "@/components/Empty";
 
 // 노션 데이터를 60초마다 새로 불러옵니다.
 export const revalidate = 60;
 
+// 팀명 옆 작은 로고 (로고 없으면 팀명 첫 글자)
+function TeamLogo({ name, logos }) {
+  const logo = logos[name];
+  return (
+    <span className="tlogo">
+      {logo ? <img src={logo} alt={name} /> : <span>{name?.[0] ?? "?"}</span>}
+    </span>
+  );
+}
+
 export default async function HomePage() {
-  const [schedule, standings, results] = await Promise.all([
+  const [schedule, standings, results, teams] = await Promise.all([
     getSchedule(),
     getStandings(),
     getResults(),
+    getTeams(),
   ]);
+
+  const teamLogos = {};
+  teams.forEach((t) => {
+    if (t.name) teamLogos[t.name] = t.logo || "";
+  });
 
   const upcoming = schedule.filter((m) => m.status !== "종료").slice(0, 3);
   const recent = results.slice(0, 3);
@@ -59,9 +75,13 @@ export default async function HomePage() {
                     {m.time && <span>· {m.time}</span>}
                   </div>
                   <div className="match">
-                    <span className="team home">{m.home || "TBD"}</span>
+                    <span className="team home">
+                      {m.home || "TBD"}<TeamLogo name={m.home} logos={teamLogos} />
+                    </span>
                     <span className="vs">VS</span>
-                    <span className="team">{m.away || "TBD"}</span>
+                    <span className="team">
+                      <TeamLogo name={m.away} logos={teamLogos} />{m.away || "TBD"}
+                    </span>
                   </div>
                   <div style={{ textAlign: "center", marginTop: 14, color: "var(--steel-400)", fontSize: 12.5 }}>
                     📍 {m.place}
@@ -96,13 +116,17 @@ export default async function HomePage() {
                       <span className="badge badge-steel">종료</span>
                     </div>
                     <div className="match">
-                      <span className="team home">{m.home || "TBD"}</span>
+                      <span className="team home">
+                        {m.home || "TBD"}<TeamLogo name={m.home} logos={teamLogos} />
+                      </span>
                       <span className="score">
                         <span className={homeWin ? "win" : ""}>{m.homeScore}</span>
                         <span style={{ color: "var(--steel-500)", margin: "0 6px" }}>:</span>
                         <span className={awayWin ? "win" : ""}>{m.awayScore}</span>
                       </span>
-                      <span className="team">{m.away || "TBD"}</span>
+                      <span className="team">
+                        <TeamLogo name={m.away} logos={teamLogos} />{m.away || "TBD"}
+                      </span>
                     </div>
                   </div>
                 );
@@ -135,7 +159,11 @@ export default async function HomePage() {
                   {topStandings.map((t, i) => (
                     <tr key={t.id} className={i === 0 ? "top" : ""}>
                       <td><span className="rank-badge">{i + 1}</span></td>
-                      <td className="team-name">{t.team}</td>
+                      <td className="team-name">
+                        <span className="tcell">
+                          <TeamLogo name={t.team} logos={teamLogos} />{t.team}
+                        </span>
+                      </td>
                       <td>{t.played}</td><td>{t.win}</td><td>{t.draw}</td><td>{t.loss}</td>
                       <td>{t.diff > 0 ? `+${t.diff}` : t.diff}</td>
                       <td className="pts">{t.points}</td>
