@@ -1,24 +1,150 @@
+import Link from "next/link";
+import { getSchedule, getStandings, getResults } from "@/lib/notion";
+import { formatDate } from "@/lib/format";
 import Empty from "@/components/Empty";
 
-export const metadata = { title: "영상 | 퍼시픽 리그" };
+// 노션 데이터를 60초마다 새로 불러옵니다.
+export const revalidate = 60;
 
-export default function VideosPage() {
+export default async function HomePage() {
+  const [schedule, standings, results] = await Promise.all([
+    getSchedule(),
+    getStandings(),
+    getResults(),
+  ]);
+
+  const upcoming = schedule.filter((m) => m.status !== "종료").slice(0, 3);
+  const recent = results.slice(0, 3);
+  const topStandings = standings.slice(0, 6);
+
   return (
     <>
-      <section className="page-title">
+      {/* ── 히어로 ── */}
+      <section className="hero">
         <div className="container">
-          <div className="eyebrow">HIGHLIGHTS</div>
-          <h1>영상</h1>
-          <p>경기 하이라이트와 리그 영상을 모아봅니다.</p>
+          <span className="eyebrow">KIMPO ICE RINK · 2026 SEASON</span>
+          <h1>
+            얼음 위의 진검승부,
+            <br />
+            <span className="grad">퍼시픽 리그</span>
+          </h1>
+          <p className="lead">
+            김포 아이스링크에서 펼쳐지는 성인 취미 아이스하키 리그.
+            6개 팀이 8월부터 10월까지 시즌을 함께 달립니다.
+          </p>
+          <div className="hero-cta">
+            <Link href="/schedule" className="btn btn-primary">경기 일정 보기</Link>
+            <Link href="/standings" className="btn btn-ghost">순위표 확인</Link>
+          </div>
         </div>
       </section>
 
-      <section className="section">
+      {/* ── 다음 경기 ── */}
+      <section className="section" style={{ paddingTop: 24 }}>
         <div className="container">
-          <Empty
-            title="하이라이트 영상이 곧 공개됩니다 🎬"
-            desc="경기 하이라이트가 준비되면 이곳에 업로드됩니다. 인스타그램에서도 만나보세요."
-          />
+          <div className="section-head">
+            <div><h2>📅 다음 경기</h2></div>
+            <Link href="/schedule" className="more">전체 일정 →</Link>
+          </div>
+
+          {upcoming.length === 0 ? (
+            <Empty title="예정된 경기가 없습니다" desc="노션 ‘경기 일정’ DB에 경기를 추가해 주세요." />
+          ) : (
+            <div className="grid grid-3">
+              {upcoming.map((m) => (
+                <div className="card" key={m.id}>
+                  <div className="match-meta">
+                    {m.round && <span className="badge badge-ice">{m.round}</span>}
+                    <span>{formatDate(m.date)}</span>
+                    {m.time && <span>· {m.time}</span>}
+                  </div>
+                  <div className="match">
+                    <span className="team home">{m.home || "TBD"}</span>
+                    <span className="vs">VS</span>
+                    <span className="team">{m.away || "TBD"}</span>
+                  </div>
+                  <div style={{ textAlign: "center", marginTop: 14, color: "var(--steel-400)", fontSize: 12.5 }}>
+                    📍 {m.place}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ── 최근 결과 ── */}
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="section-head">
+            <div><h2>🏆 최근 결과</h2></div>
+            <Link href="/results" className="more">전체 결과 →</Link>
+          </div>
+
+          {recent.length === 0 ? (
+            <Empty title="등록된 경기 결과가 없습니다" desc="노션 ‘경기 결과’ DB에 결과를 입력해 주세요." />
+          ) : (
+            <div className="grid grid-3">
+              {recent.map((m) => {
+                const homeWin = m.homeScore > m.awayScore;
+                const awayWin = m.awayScore > m.homeScore;
+                return (
+                  <div className="card" key={m.id}>
+                    <div className="match-meta">
+                      {m.round && <span className="badge badge-ice">{m.round}</span>}
+                      <span>{formatDate(m.date)}</span>
+                      <span className="badge badge-steel">종료</span>
+                    </div>
+                    <div className="match">
+                      <span className="team home">{m.home || "TBD"}</span>
+                      <span className="score">
+                        <span className={homeWin ? "win" : ""}>{m.homeScore}</span>
+                        <span style={{ color: "var(--steel-500)", margin: "0 6px" }}>:</span>
+                        <span className={awayWin ? "win" : ""}>{m.awayScore}</span>
+                      </span>
+                      <span className="team">{m.away || "TBD"}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ── 리그 순위 ── */}
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="section-head">
+            <div><h2>📊 리그 순위</h2></div>
+            <Link href="/standings" className="more">전체 순위 →</Link>
+          </div>
+
+          {topStandings.length === 0 ? (
+            <Empty title="순위 데이터가 없습니다" desc="경기 결과를 입력하면 자동으로 계산됩니다." />
+          ) : (
+            <div className="table-wrap">
+              <table className="standings">
+                <thead>
+                  <tr>
+                    <th>순위</th><th style={{ textAlign: "left" }}>팀</th>
+                    <th>경기</th><th>승</th><th>무</th><th>패</th><th>득실</th><th>승점</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {topStandings.map((t, i) => (
+                    <tr key={t.id} className={i === 0 ? "top" : ""}>
+                      <td><span className="rank-badge">{i + 1}</span></td>
+                      <td className="team-name">{t.team}</td>
+                      <td>{t.played}</td><td>{t.win}</td><td>{t.draw}</td><td>{t.loss}</td>
+                      <td>{t.diff > 0 ? `+${t.diff}` : t.diff}</td>
+                      <td className="pts">{t.points}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </section>
     </>
