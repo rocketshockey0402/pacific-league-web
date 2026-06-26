@@ -277,6 +277,19 @@ table.standings .pts { font-weight: 900; color: var(--ice-400); font-size: 15px;
 .player-row .pstat .unit { font-size: 11px; color: var(--steel-400); margin-left: 3px; }
 .player-row .pstat .sub { font-size: 11.5px; color: var(--steel-400); margin-top: 1px; }
 
+/* ── 영상 카드 ── */
+.video-card { padding: 0; overflow: hidden; }
+.video-frame {
+  position: relative; width: 100%; aspect-ratio: 16 / 9;
+  background: #000; display: block;
+}
+.video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.video-link { display: grid; place-items: center; color: var(--ice-300); font-weight: 800; text-decoration: none; }
+.video-meta { padding: 16px 18px 20px; }
+.video-meta h3 { margin: 0 0 4px; font-size: 16px; font-weight: 800; }
+.video-meta .when { font-size: 12px; color: var(--steel-400); }
+.video-meta p { margin: 8px 0 0; font-size: 13.5px; color: var(--text-dim); }
+
 /* ── 하단 고정 바텀 바 ── */
 body { padding-bottom: 68px; } /* 바텀 바에 가려지지 않도록 여백 확보 */
 .bottom-nav {
