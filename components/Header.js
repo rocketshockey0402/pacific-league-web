@@ -16,11 +16,8 @@ export default function Header() {
       <div className="container">
         <nav className="nav">
           <Link href="/" className="brand">
-            <span className="mark">PL</span>
-            <span>
-              <span className="sub">PACIFIC LEAGUE</span>
-              <span className="name">퍼시픽 리그</span>
-            </span>
+            <img src="/logo.png" className="brand-logo" alt="퍼시픽 리그" />
+            <span className="name">퍼시픽 리그</span>
           </Link>
 
           <div className="nav-links">
