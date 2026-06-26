@@ -78,7 +78,7 @@ export default async function HomePage() {
                       <TeamLogo name={m.away} logos={teamLogos} />{m.away || "TBD"}
                     </span>
                   </div>
-                  <div style={{ textAlign: "center", marginTop: 14, color: "var(--steel-400)", fontSize: 12.5 }}>
+<div style={{ textAlign: "center", marginTop: 14, color: "var(--steel-400)", fontSize: 12.5 }}>
                     📍 {m.place}
                   </div>
                 </div>
