@@ -7,7 +7,7 @@ const MEDALS = ["🥇", "🥈", "🥉"];
 
 export default function StandingsView({ standings = [], players = [] }) {
   const [tab, setTab] = useState("team"); // team | player
-  const [sub, setSub] = useState("points"); // goals | assists | points
+  const [sub, setSub] = useState("goals"); // goals | assists | points
 
   // 개인 기록 정렬
   const key = sub === "goals" ? "goals" : sub === "assists" ? "assists" : "points";
