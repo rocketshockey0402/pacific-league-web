@@ -47,7 +47,14 @@ export default function StandingsView({ standings = [], players = [], teamLogos 
                 {standings.map((t, i) => (
                   <tr key={t.id} className={i === 0 ? "top" : ""}>
                     <td><span className="rank-badge">{i + 1}</span></td>
-                    <td className="team-name">{t.team}</td>
+                    <td className="team-name">
+                      <span className="tcell">
+                        <span className="tlogo">
+                          {teamLogos[t.team] ? <img src={teamLogos[t.team]} alt={t.team} /> : <span>{t.team?.[0] ?? "?"}</span>}
+                        </span>
+                        {t.team}
+                      </span>
+                    </td>
                     <td>{t.played}</td><td>{t.win}</td><td>{t.draw}</td><td>{t.loss}</td>
                     <td>{t.gf}</td><td>{t.ga}</td>
                     <td>{t.diff > 0 ? `+${t.diff}` : t.diff}</td>
