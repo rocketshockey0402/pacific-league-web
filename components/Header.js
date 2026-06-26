@@ -23,12 +23,6 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* CSS만으로 동작하는 모바일 메뉴 토글 */}
-          <input type="checkbox" id="nav-toggle" className="nav-toggle" hidden />
-          <label htmlFor="nav-toggle" className="hamburger" aria-label="메뉴 열기">
-            <span />
-          </label>
-
           <div className="nav-links">
             {menu.map((m) => (
               <Link key={m.href} href={m.href}>
