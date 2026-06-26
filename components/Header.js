@@ -16,7 +16,7 @@ export default function Header() {
       <div className="container">
         <nav className="nav">
           <Link href="/" className="brand">
-            <img src="/logo.png" className="brand-logo" alt="퍼시픽 리그" />
+            <img src="/logo.png.png" className="brand-logo" alt="퍼시픽 리그" />
             <span className="name">퍼시픽 리그</span>
           </Link>
 
