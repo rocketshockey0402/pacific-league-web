@@ -5,12 +5,6 @@ import Empty from "@/components/Empty";
 export const metadata = { title: "경기 일정 | 퍼시픽 리그" };
 export const revalidate = 60;
 
-const statusBadge = (s) => {
-  if (s === "종료") return "badge-steel";
-  if (s === "진행" || s === "진행중") return "badge-live";
-  return "badge-ice";
-};
-
 function TeamLogo({ name, logos }) {
   const logo = logos[name];
   return (
@@ -28,13 +22,20 @@ export default async function SchedulePage() {
     if (t.name) teamLogos[t.name] = t.logo || "";
   });
 
+  const groups = {};
+  schedule.forEach((m) => {
+    const key = m.date || "미정";
+    (groups[key] = groups[key] || []).push(m);
+  });
+  const dates = Object.keys(groups).sort((a, b) => a.localeCompare(b));
+
   return (
     <>
       <section className="page-title">
         <div className="container">
           <div className="eyebrow">MATCH SCHEDULE</div>
           <h1>경기 일정</h1>
-          <p>퍼시픽 리그 2026 시즌 전체 경기 일정입니다.</p>
+          <p>퍼시픽 리그 2026 시즌 · 매주 일요일 진행</p>
         </div>
       </section>
 
@@ -43,27 +44,29 @@ export default async function SchedulePage() {
           {schedule.length === 0 ? (
             <Empty title="등록된 경기 일정이 없어요" desc="노션 ‘경기 일정’ DB에 경기를 추가하면 자동으로 표시됩니다." />
           ) : (
-            <div className="grid grid-2">
-              {schedule.map((m) => (
-                <div className="card" key={m.id}>
-                  <div className="match-meta">
-                    <span className={`badge ${statusBadge(m.status)}`}>{m.status}</span>
-                    {m.round && <span className="badge badge-ice">{m.round}</span>}
-                    <span>{formatDate(m.date)}</span>
-                    {m.time && <span>· {m.time}</span>}
-                  </div>
-                  <div className="match">
-                    <span className="team home">
-                      {m.home || "TBD"}<TeamLogo name={m.home} logos={teamLogos} />
-                    </span>
-                    <span className="vs">VS</span>
-                    <span className="team">
-                      <TeamLogo name={m.away} logos={teamLogos} />{m.away || "TBD"}
-                    </span>
-                  </div>
+            dates.map((d) => (
+              <div className="fix-group" key={d}>
+                <div className="fix-date">{d === "미정" ? "일정 미정" : formatDate(d)}</div>
+                <div className="fix-list">
+                  {groups[d].map((m) => (
+                    <div className="fix-row" key={m.id}>
+                      <div className="fix-team home">
+                        <span className="fix-name">{m.home || "TBD"}</span>
+                        <TeamLogo name={m.home} logos={teamLogos} />
+                      </div>
+                      <div className="fix-center">
+                        <div className="fix-time">{m.time || "시간 미정"}</div>
+                        <div className="fix-status">{m.status}</div>
+                      </div>
+                      <div className="fix-team away">
+                        <TeamLogo name={m.away} logos={teamLogos} />
+                        <span className="fix-name">{m.away || "TBD"}</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))
           )}
         </div>
       </section>
