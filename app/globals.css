@@ -79,14 +79,7 @@ img { max-width: 100%; display: block; }
   font-weight: 800;
   letter-spacing: 0.04em;
 }
-.brand .mark {
-  width: 30px; height: 30px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--ice-500), var(--navy-600));
-  display: grid; place-items: center;
-  font-size: 15px; font-weight: 900; color: #04101f;
-  box-shadow: 0 0 18px rgba(56, 189, 248, 0.45);
-}
+.brand .brand-logo { height: 42px; width: auto; display: block; }
 .brand .name { font-size: 17px; }
 .brand .sub { font-size: 10px; letter-spacing: 0.28em; color: var(--ice-300); display:block; line-height:1; }
 
