@@ -5,7 +5,7 @@ import Empty from "@/components/Empty";
 
 const MEDALS = ["🥇", "🥈", "🥉"];
 
-export default function StandingsView({ standings = [], players = [] }) {
+export default function StandingsView({ standings = [], players = [], teamLogos = {} }) {
   const [tab, setTab] = useState("team"); // team | player
   const [sub, setSub] = useState("goals"); // goals | assists | points
 
@@ -75,6 +75,13 @@ export default function StandingsView({ standings = [], players = [] }) {
               {sorted.map((pl, i) => (
                 <div className="player-row" key={pl.id}>
                   <div className="rk">{i < 3 ? MEDALS[i] : i + 1}</div>
+                  <div className="plogo">
+                    {teamLogos[pl.team] ? (
+                      <img src={teamLogos[pl.team]} alt={pl.team} />
+                    ) : (
+                      <span>{pl.team?.[0] ?? "?"}</span>
+                    )}
+                  </div>
                   <div className="pinfo">
                     <div className="pname">{pl.name}</div>
                     <div className="pmeta">
